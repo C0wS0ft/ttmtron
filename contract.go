@@ -15,6 +15,11 @@ type (
 
 	TTMTron interface {
 		CurrentBlockNumber(context.Context) (int64, error)
+		GetAccountBalance(context.Context, string, string) (uint64, error)
+		GetTRC20TokenSymbol(context.Context, string, string) (string, error)
+		GetTRC20TokenDecimals(context.Context, string, string) (uint64, error)
+		GetTRC20TokenBalance(context.Context, string, string) (uint64, error)
+		GetTRC20SmartContract(context.Context, string) (*GetContractReply, error)
 	}
 )
 
