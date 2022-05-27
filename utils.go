@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"strconv"
 
 	"github.com/mr-tron/base58"
 )
@@ -78,4 +79,13 @@ func DecodeConstantToSymbol(in string) (string, error) {
 	}
 
 	return string(bs), nil
+}
+
+func getTokenType(token string) tokenTypes {
+	_, err := strconv.Atoi(token)
+	if err != nil {
+		return TRC20
+	} else {
+		return TRC10
+	}
 }

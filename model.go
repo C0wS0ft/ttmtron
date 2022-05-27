@@ -1,7 +1,14 @@
 package ttmtron
 
+const (
+	TRC10 tokenTypes = "TRC10"
+	TRC20 tokenTypes = "TRC20"
+)
+
+type tokenTypes = string
+
 type Block struct {
-	BlockId     string `json:"blockID"`
+	BlockID     string `json:"blockID"`
 	Txs         []Tx   `json:"transactions"`
 	BlockHeader struct {
 		Data BlockData `json:"raw_data"`
