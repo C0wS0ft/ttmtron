@@ -19,14 +19,14 @@ func Init(baseURL string) *TronRequest {
 }
 
 // CurrentBlockNumber return current block number
-func (t *TronRequest) CurrentBlockNumber(ctx context.Context) (int64, error) {
+func (t *TronRequest) CurrentBlockNumber(ctx context.Context) (uint64, error) {
 	// log := logger.FromContext(ctx).WithField("m", "Client::CurrentBlockNumber")
 	// log.Debugf("Client::CurrentBlockNumber:: ")
 
 	var block Block
 	err := t.Post(&block, "wallet/getnowblock", nil)
 
-	return block.BlockHeader.Data.Number, errors.Wrap(err, "unable to post wallet/getnowblock")
+	return uint64(block.BlockHeader.Data.Number), errors.Wrap(err, "unable to post wallet/getnowblock")
 }
 
 // GetBlockByNumber return block by number
@@ -40,11 +40,11 @@ func (t *TronRequest) GetBlockByNumber(ctx context.Context, num uint64) (*Block,
 	return &block, errors.Wrap(err, "unable to get block by number")
 }
 
-func (t *TronRequest) GetBlockByLimitNext(ctx context.Context, startnum, endnum uint64) (*[]Block, error) {
-	var blocks []Block
+func (t *TronRequest) GetBlockByLimitNext(ctx context.Context, startnum, endnum uint64) ([]*Block, error) {
+	var blocks []*Block
 	err := t.Post(&blocks, "wallet/getblockbylimitnext", GetBlockByLimitNextRequest{StartNum: startnum, EndNum: endnum})
 
-	return &blocks, errors.Wrap(err, "unable to get block by limit")
+	return blocks, errors.Wrap(err, "unable to get block by limit")
 }
 
 // GetAccountBalance due to unknown reason Tron accepts only HEX address, not base58
