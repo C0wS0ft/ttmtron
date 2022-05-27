@@ -26,7 +26,7 @@ func (t *TronRequest) CurrentBlockNumber(ctx context.Context) (uint64, error) {
 	var block Block
 	err := t.Post(&block, "wallet/getnowblock", nil)
 
-	return uint64(block.BlockHeader.Data.Number), errors.Wrap(err, "unable to post wallet/getnowblock")
+	return block.BlockHeader.Data.Number, errors.Wrap(err, "unable to post wallet/getnowblock")
 }
 
 // GetBlockByNumber return block by number
@@ -40,8 +40,8 @@ func (t *TronRequest) GetBlockByNumber(ctx context.Context, num uint64) (*Block,
 	return &block, errors.Wrap(err, "unable to get block by number")
 }
 
-func (t *TronRequest) GetBlockByLimitNext(ctx context.Context, startnum, endnum uint64) ([]*Block, error) {
-	var blocks []*Block
+func (t *TronRequest) GetBlockByLimitNext(ctx context.Context, startnum, endnum uint64) (*Blocks, error) {
+	var blocks *Blocks
 	err := t.Post(&blocks, "wallet/getblockbylimitnext", GetBlockByLimitNextRequest{StartNum: startnum, EndNum: endnum})
 
 	return blocks, errors.Wrap(err, "unable to get block by limit")

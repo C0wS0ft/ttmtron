@@ -15,9 +15,13 @@ type Block struct {
 	} `json:"block_header"`
 }
 
+type Blocks struct {
+	Blocks []Block `json:"block"`
+}
+
 type BlockData struct {
-	Number    int64 `json:"number"`
-	Timestamp int64 `json:"timestamp"`
+	Number    uint64 `json:"number"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type Tx struct {
