@@ -20,8 +20,8 @@ func Init(baseURL string) *TronRequest {
 
 // CurrentBlockNumber return current block number
 func (t *TronRequest) CurrentBlockNumber(ctx context.Context) (int64, error) {
-	//log := logger.FromContext(ctx).WithField("m", "Client::CurrentBlockNumber")
-	//log.Debugf("Client::CurrentBlockNumber:: ")
+	// log := logger.FromContext(ctx).WithField("m", "Client::CurrentBlockNumber")
+	// log.Debugf("Client::CurrentBlockNumber:: ")
 
 	var block Block
 	err := t.Post(&block, "wallet/getnowblock", nil)
@@ -29,10 +29,28 @@ func (t *TronRequest) CurrentBlockNumber(ctx context.Context) (int64, error) {
 	return block.BlockHeader.Data.Number, errors.Wrap(err, "unable to post wallet/getnowblock")
 }
 
+// GetBlockByNumber return block by number
+func (t *TronRequest) GetBlockByNumber(ctx context.Context, num uint64) (*Block, error) {
+	// log := logger.FromContext(ctx).WithField("m", "GetBlockByNumber")
+	// log.Debugf("GetBlockByNumber:: num: %v", num)
+
+	var block Block
+	err := t.Post(&block, "wallet/getblockbynum", GetBlockByNumRequest{Num: num})
+
+	return &block, errors.Wrap(err, "unable to get block by number")
+}
+
+func (t *TronRequest) GetBlockByLimitNext(ctx context.Context, startnum, endnum uint64) (*[]Block, error) {
+	var blocks []Block
+	err := t.Post(&blocks, "wallet/getblockbylimitnext", GetBlockByLimitNextRequest{StartNum: startnum, EndNum: endnum})
+
+	return &blocks, errors.Wrap(err, "unable to get block by limit")
+}
+
 // GetAccountBalance due to unknown reason Tron accepts only HEX address, not base58
 func (t *TronRequest) GetAccountBalance(ctx context.Context, address string, asset string) (uint64, error) {
-	//log := logger.FromContext(ctx).WithField("m", "Client::GetAccountBalance")
-	//log.Debugf("Client::GetAccountBalance:: ")
+	// log := logger.FromContext(ctx).WithField("m", "Client::GetAccountBalance")
+	// log.Debugf("Client::GetAccountBalance:: ")
 
 	address = Base58ToHex(address)
 
@@ -49,8 +67,8 @@ func (t *TronRequest) GetAccountBalance(ctx context.Context, address string, ass
 
 // triggerConstantContract Call smart contract function and return constant_result field
 func (t *TronRequest) triggerConstantContract(ctx context.Context, ownerAddress string, smartContractAddress string, function string, params []string) ([]string, error) { //nolint:lll
-	//log := logger.FromContext(ctx).WithField("m", "Client::triggerConstantContract")
-	//log.Debugf("Client::triggerConstantContract:: ")
+	// log := logger.FromContext(ctx).WithField("m", "Client::triggerConstantContract")
+	// log.Debugf("Client::triggerConstantContract:: ")
 
 	var result TriggerConstantContractReply
 	var parameters string
@@ -78,8 +96,8 @@ func (t *TronRequest) triggerConstantContract(ctx context.Context, ownerAddress 
 
 // GetTRC20TokenSymbol returns TRC20 smart contract token symbol
 func (t *TronRequest) GetTRC20TokenSymbol(ctx context.Context, ownerAddress string, smartContractAddress string) (string, error) { //nolint:lll
-	//log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenSymbol")
-	//log.Debugf("Client::GetTRC20TokenSymbol:: ")
+	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenSymbol")
+	// log.Debugf("Client::GetTRC20TokenSymbol:: ")
 
 	res, err := t.triggerConstantContract(ctx, ownerAddress, smartContractAddress, "symbol()", []string{})
 
@@ -98,8 +116,8 @@ func (t *TronRequest) GetTRC20TokenSymbol(ctx context.Context, ownerAddress stri
 
 // GetTRC20TokenDecimals returns TRC20 smart contract token decimals
 func (t *TronRequest) GetTRC20TokenDecimals(ctx context.Context, ownerAddress string, smartContractAddress string) (uint64, error) { //nolint:lll
-	//log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenDecimals")
-	//log.Debugf("Client::GetTRC20TokenDecimals:: ")
+	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenDecimals")
+	// log.Debugf("Client::GetTRC20TokenDecimals:: ")
 
 	res, err := t.triggerConstantContract(ctx, ownerAddress, smartContractAddress, "decimals()", []string{})
 
@@ -118,8 +136,8 @@ func (t *TronRequest) GetTRC20TokenDecimals(ctx context.Context, ownerAddress st
 
 // GetTRC20TokenBalance returns TRC20 smart contract token balance
 func (t *TronRequest) GetTRC20TokenBalance(ctx context.Context, ownerAddress string, smartContractAddress string) (uint64, error) { //nolint:lll
-	//log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenBalance")
-	//log.Debugf("Client::GetTRC20TokenBalance:: ")
+	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenBalance")
+	// log.Debugf("Client::GetTRC20TokenBalance:: ")
 
 	address, err := EncodeAddressToParameter(ownerAddress)
 
@@ -145,8 +163,8 @@ func (t *TronRequest) GetTRC20TokenBalance(ctx context.Context, ownerAddress str
 }
 
 func (t *TronRequest) GetTRC20SmartContract(ctx context.Context, smartContractAddress string) (*GetContractReply, error) {
-	//log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20SmartContract")
-	//log.Debugf("Client::GetTRC20SmartContract:: ")
+	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20SmartContract")
+	// log.Debugf("Client::GetTRC20SmartContract:: ")
 
 	var result GetContractReply
 

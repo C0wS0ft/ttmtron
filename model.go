@@ -78,3 +78,12 @@ type GetContractReply struct {
 	ContractAddress             string `json:"contract_address"`
 	CodeHash                    string `json:"code_hash"`
 }
+
+type GetBlockByNumRequest struct {
+	Num uint64 `json:"num"`
+}
+
+type GetBlockByLimitNextRequest struct {
+	StartNum uint64 `json:"startNum"`
+	EndNum   uint64 `json:"endNum"`
+}
