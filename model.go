@@ -115,6 +115,6 @@ type GetAssetIssueByIDReply struct {
 	StartTime    int64  `json:"start_time"`
 	EndTime      int64  `json:"end_time"`
 	Description  string `json:"description"`
-	Url          string `json:"url"`
-	Id           string `json:"id"`
+	URL          string `json:"url"`
+	ID           string `json:"id"`
 }
