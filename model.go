@@ -1,11 +1,11 @@
 package ttmtron
 
 const (
-	TRC10 tokenTypes = "TRC10"
-	TRC20 tokenTypes = "TRC20"
+	TRC10 TokenTypes = "TRC10"
+	TRC20 TokenTypes = "TRC20"
 )
 
-type tokenTypes = string
+type TokenTypes = string
 
 type Block struct {
 	BlockID     string `json:"blockID"`
