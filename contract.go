@@ -22,6 +22,8 @@ type (
 		GetTRC20TokenDecimals(context.Context, string, string) (uint64, error)
 		GetTRC20TokenBalance(context.Context, string, string) (uint64, error)
 		GetTRC20SmartContract(context.Context, string) (*GetContractReply, error)
+
+		GetTRC10TokenInfoByID(context.Context, uint64) (*GetAssetIssueByIDReply, error)
 	}
 )
 

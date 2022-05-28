@@ -81,11 +81,11 @@ func DecodeConstantToSymbol(in string) (string, error) {
 	return string(bs), nil
 }
 
-func getTokenType(token string) tokenTypes {
+func GetTokenType(token string) tokenTypes {
 	_, err := strconv.Atoi(token)
 	if err != nil {
 		return TRC20
-	} else {
-		return TRC10
 	}
+
+	return TRC10
 }

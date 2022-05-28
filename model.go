@@ -98,3 +98,23 @@ type GetBlockByLimitNextRequest struct {
 	StartNum uint64 `json:"startNum"`
 	EndNum   uint64 `json:"endNum"`
 }
+
+// TRC10
+
+type GetAssetIssueByIDRequest struct {
+	Value uint64 `json:"value"`
+}
+
+type GetAssetIssueByIDReply struct {
+	OwnerAddress string `json:"owner_address"`
+	Name         string `json:"name"`
+	Abbr         string `json:"abbr"`
+	TotalSupply  int64  `json:"total_supply"`
+	TrxNum       int    `json:"trx_num"`
+	Num          int    `json:"num"`
+	StartTime    int64  `json:"start_time"`
+	EndTime      int64  `json:"end_time"`
+	Description  string `json:"description"`
+	Url          string `json:"url"`
+	Id           string `json:"id"`
+}

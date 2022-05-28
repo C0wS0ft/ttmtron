@@ -181,3 +181,15 @@ func (t *TronRequest) GetTRC20SmartContract(ctx context.Context, smartContractAd
 
 	return &result, nil
 }
+
+func (t *TronRequest) GetTRC10TokenInfoByID(ctx context.Context, tokenID uint64) (*GetAssetIssueByIDReply, error) {
+	var result GetAssetIssueByIDReply
+
+	err := t.Post(&result, "wallet/getassetissuebyid", GetAssetIssueByIDRequest{Value: tokenID})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
