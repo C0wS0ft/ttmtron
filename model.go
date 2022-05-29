@@ -45,10 +45,13 @@ type Contract struct {
 }
 
 type TransferValue struct {
-	Amount       int    `json:"amount"`
-	OwnerAddress string `json:"owner_address"`
-	ToAddress    string `json:"to_address"`
-	AssetName    string `json:"asset_name,omitempty"`
+	Data            string `json:"data"`                 // TRC20
+	ContractAddress string `json:"contract_address"`     // TRC20
+	CallValue       uint64 `json:"call_value"`           // TRC20
+	Amount          int    `json:"amount"`               // TRC10 & TRX
+	OwnerAddress    string `json:"owner_address"`        // TRC10 & TRC20 & TRX
+	ToAddress       string `json:"to_address"`           // TRC10 & TRX
+	AssetName       string `json:"asset_name,omitempty"` // TRC10 & TRX
 }
 
 type AccountRequest struct {
