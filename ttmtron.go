@@ -105,7 +105,7 @@ func (t *TronRequest) GetTRC20TokenSymbol(ctx context.Context, ownerAddress stri
 	}
 
 	if len(res) < 1 {
-		return 0, errors.New("unable to get token symbol")
+		return "", errors.New("unable to get token symbol")
 	}
 
 	symbol, err := DecodeConstantToSymbol(res[0])
