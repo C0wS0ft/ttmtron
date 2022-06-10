@@ -2,7 +2,6 @@ package ttmtron
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/trustwallet/go-libs/client"
@@ -105,6 +104,10 @@ func (t *TronRequest) GetTRC20TokenSymbol(ctx context.Context, ownerAddress stri
 		return "", err
 	}
 
+	if len(res) < 1 {
+		return 0, errors.New("unable to get token symbol")
+	}
+
 	symbol, err := DecodeConstantToSymbol(res[0])
 
 	if err != nil {
@@ -123,6 +126,10 @@ func (t *TronRequest) GetTRC20TokenDecimals(ctx context.Context, ownerAddress st
 
 	if err != nil {
 		return 0, err
+	}
+
+	if len(res) < 1 {
+		return 0, errors.New("unable to get token decimals")
 	}
 
 	decimals, err := HexToInt256(res[0])
@@ -151,7 +158,9 @@ func (t *TronRequest) GetTRC20TokenBalance(ctx context.Context, ownerAddress str
 		return 0, err
 	}
 
-	fmt.Println(res)
+	if len(res) < 1 {
+		return 0, errors.New("unable to get balance")
+	}
 
 	balance, err := HexToInt256(res[0])
 
