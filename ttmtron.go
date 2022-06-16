@@ -2,6 +2,8 @@ package ttmtron
 
 import (
 	"context"
+	"encoding/hex"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/trustwallet/go-libs/client"
@@ -19,9 +21,6 @@ func Init(baseURL string) *TronRequest {
 
 // CurrentBlockNumber return current block number
 func (t *TronRequest) CurrentBlockNumber(ctx context.Context) (uint64, error) {
-	// log := logger.FromContext(ctx).WithField("m", "Client::CurrentBlockNumber")
-	// log.Debugf("Client::CurrentBlockNumber:: ")
-
 	var block Block
 	err := t.Post(&block, "wallet/getnowblock", nil)
 
@@ -30,9 +29,6 @@ func (t *TronRequest) CurrentBlockNumber(ctx context.Context) (uint64, error) {
 
 // GetBlockByNumber return block by number
 func (t *TronRequest) GetBlockByNumber(ctx context.Context, num uint64) (*Block, error) {
-	// log := logger.FromContext(ctx).WithField("m", "GetBlockByNumber")
-	// log.Debugf("GetBlockByNumber:: num: %v", num)
-
 	var block Block
 	err := t.Post(&block, "wallet/getblockbynum", GetBlockByNumRequest{Num: num})
 
@@ -48,9 +44,6 @@ func (t *TronRequest) GetBlockByLimitNext(ctx context.Context, startnum, endnum 
 
 // GetAccountBalance due to unknown reason Tron accepts only HEX address, not base58
 func (t *TronRequest) GetAccountBalance(ctx context.Context, address string, asset string) (uint64, error) {
-	// log := logger.FromContext(ctx).WithField("m", "Client::GetAccountBalance")
-	// log.Debugf("Client::GetAccountBalance:: ")
-
 	address = Base58ToHex(address)
 
 	var account AccountReply
@@ -66,9 +59,6 @@ func (t *TronRequest) GetAccountBalance(ctx context.Context, address string, ass
 
 // triggerConstantContract Call smart contract function and return constant_result field
 func (t *TronRequest) triggerConstantContract(ctx context.Context, ownerAddress string, smartContractAddress string, function string, params []string) ([]string, error) { //nolint:lll
-	// log := logger.FromContext(ctx).WithField("m", "Client::triggerConstantContract")
-	// log.Debugf("Client::triggerConstantContract:: ")
-
 	var result TriggerConstantContractReply
 	var parameters string
 
@@ -93,11 +83,38 @@ func (t *TronRequest) triggerConstantContract(ctx context.Context, ownerAddress 
 	return result.ConstantResult, nil
 }
 
+func (t *TronRequest) triggerSmartContractTransfer(ctx context.Context, ownerAddress string,
+	smartContractAddress string, callValue uint64, parameter string, feeLimit uint64) (*CreateTransactionReply, error) {
+	var result TriggerSmartContractTransferReply
+
+	contract := TriggerSmartContractRequest{
+		OwnerAddress:     Base58ToHex(ownerAddress),
+		ContractAddress:  Base58ToHex(smartContractAddress),
+		FunctionSelector: "transfer (address, uint256)",
+		CallValue:        callValue,
+		Parameter:        parameter,
+		FeeLimit:         feeLimit,
+		CallTokenValue:   0,
+		TokenID:          0,
+	}
+
+	err := t.Post(&result, "wallet/triggersmartcontract", contract)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !result.Result.Result {
+		qq, _ := hex.DecodeString(result.Result.Message)
+
+		return nil, errors.New(string(qq))
+	}
+
+	return &result.Transaction, nil
+}
+
 // GetTRC20TokenSymbol returns TRC20 smart contract token symbol
 func (t *TronRequest) GetTRC20TokenSymbol(ctx context.Context, ownerAddress string, smartContractAddress string) (string, error) { //nolint:lll
-	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenSymbol")
-	// log.Debugf("Client::GetTRC20TokenSymbol:: ")
-
 	res, err := t.triggerConstantContract(ctx, ownerAddress, smartContractAddress, "symbol()", []string{})
 
 	if err != nil {
@@ -119,9 +136,6 @@ func (t *TronRequest) GetTRC20TokenSymbol(ctx context.Context, ownerAddress stri
 
 // GetTRC20TokenDecimals returns TRC20 smart contract token decimals
 func (t *TronRequest) GetTRC20TokenDecimals(ctx context.Context, ownerAddress string, smartContractAddress string) (uint64, error) { //nolint:lll
-	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenDecimals")
-	// log.Debugf("Client::GetTRC20TokenDecimals:: ")
-
 	res, err := t.triggerConstantContract(ctx, ownerAddress, smartContractAddress, "decimals()", []string{})
 
 	if err != nil {
@@ -143,9 +157,6 @@ func (t *TronRequest) GetTRC20TokenDecimals(ctx context.Context, ownerAddress st
 
 // GetTRC20TokenBalance returns TRC20 smart contract token balance
 func (t *TronRequest) GetTRC20TokenBalance(ctx context.Context, ownerAddress string, smartContractAddress string) (uint64, error) { //nolint:lll
-	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20TokenBalance")
-	// log.Debugf("Client::GetTRC20TokenBalance:: ")
-
 	address, err := EncodeAddressToParameter(ownerAddress)
 
 	if err != nil {
@@ -172,9 +183,6 @@ func (t *TronRequest) GetTRC20TokenBalance(ctx context.Context, ownerAddress str
 }
 
 func (t *TronRequest) GetTRC20SmartContract(ctx context.Context, smartContractAddress string) (*GetContractReply, error) {
-	// log := logger.FromContext(ctx).WithField("m", "Client::GetTRC20SmartContract")
-	// log.Debugf("Client::GetTRC20SmartContract:: ")
-
 	var result GetContractReply
 
 	err := t.Post(&result, "wallet/getcontract",
@@ -195,6 +203,76 @@ func (t *TronRequest) GetTRC10TokenInfoByID(ctx context.Context, tokenID uint64)
 	var result GetAssetIssueByIDReply
 
 	err := t.Post(&result, "wallet/getassetissuebyid", GetAssetIssueByIDRequest{Value: tokenID})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (t *TronRequest) TransferTRX(ctx context.Context, from, to string, amount uint64) (*CreateTransactionReply, error) {
+	var result CreateTransactionReply
+
+	value := TransferValue{
+		Amount:       amount,
+		OwnerAddress: Base58ToHex(from),
+		ToAddress:    Base58ToHex(to),
+	}
+
+	err := t.Post(&result, "wallet/createtransaction", value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (t *TronRequest) TransferTRC10Token(ctx context.Context, from, to string, tokenID uint64, amount uint64) (*CreateTransactionReply, error) { //nolint:lll
+	var result CreateTransactionReply
+
+	tokenIDStr := fmt.Sprintf("%d", tokenID)
+
+	value := TransferValue{
+		Amount:       amount,
+		OwnerAddress: Base58ToHex(from),
+		ToAddress:    Base58ToHex(to),
+		AssetName:    hex.EncodeToString([]byte(tokenIDStr)),
+	}
+
+	err := t.Post(&result, "wallet/transferasset", value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (t *TronRequest) TransferTRC20Token(ctx context.Context, from, to, smartContractAddress string, amount uint64, feeLimit uint64) (*CreateTransactionReply, error) { //nolint:lll
+	parameter := AddParameterAddress(to)
+	parameter += AddParameterAmount(amount * 1000000) // check this
+
+	feeLimit *= 1000000
+
+	result, err := t.triggerSmartContractTransfer(ctx, from, smartContractAddress, 0, parameter, feeLimit)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (t *TronRequest) BroadcastSignedTransaction(rawdata, rawdataHex string) (*BroadcastSignedTransactionReply, error) {
+	var result BroadcastSignedTransactionReply
+
+	err := t.Post(&result, "wallet/broadcasttransaction",
+		BroadcastSignedTransactionRequest{
+			RawData:    rawdata,
+			RawDataHex: rawdataHex,
+		},
+	)
 
 	if err != nil {
 		return nil, err

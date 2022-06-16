@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/mr-tron/base58"
 )
@@ -78,4 +79,15 @@ func DecodeConstantToSymbol(in string) (string, error) {
 	}
 
 	return string(bs), nil
+}
+
+func AddParameterAddress(in string) string {
+	addr := Base58ToHex(in)
+	addr = strings.TrimPrefix(addr, "41")
+
+	return fmt.Sprintf("%064s", addr)
+}
+
+func AddParameterAmount(in uint64) string {
+	return fmt.Sprintf("%064x", in)
 }

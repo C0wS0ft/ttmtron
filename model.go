@@ -1,8 +1,10 @@
 package ttmtron
 
 const (
-	TRC10 TokenTypes = "TRC10"
-	TRC20 TokenTypes = "TRC20"
+	TRC10       TokenTypes = "TRC10"
+	TRC20       TokenTypes = "TRC20"
+	SigTransfer            = "a9059cbb"
+	SigSwap                = "a8f85ca6"
 )
 
 type TokenTypes = string
@@ -39,16 +41,19 @@ type ContractType = string
 
 type Contract struct {
 	Type      ContractType `json:"type"`
-	Parameter struct {
-		Value TransferValue `json:"value"`
-	} `json:"parameter"`
+	Parameter Parameter    `json:"parameter"`
+}
+
+type Parameter struct {
+	Value   TransferValue `json:"value"`
+	TypeURL string        `json:"type_url"`
 }
 
 type TransferValue struct {
 	Data            string `json:"data"`                 // TRC20
 	ContractAddress string `json:"contract_address"`     // TRC20
 	CallValue       uint64 `json:"call_value"`           // TRC20
-	Amount          int    `json:"amount"`               // TRC10 & TRX
+	Amount          uint64 `json:"amount"`               // TRC10 & TRX
 	OwnerAddress    string `json:"owner_address"`        // TRC10 & TRC20 & TRX
 	ToAddress       string `json:"to_address"`           // TRC10 & TRX
 	AssetName       string `json:"asset_name,omitempty"` // TRC10 & TRX
@@ -71,6 +76,18 @@ type TriggerConstantContractRequest struct {
 	FunctionSelector string `json:"function_selector"`
 	Parameter        string `json:"parameter"`
 	Visible          bool   `json:"visible"`
+}
+
+type TriggerSmartContractRequest struct {
+	OwnerAddress     string `json:"owner_address"`     // Address that triggers the contract, converted to a hex string.
+	ContractAddress  string `json:"contract_address"`  // Contract address, converted to a hex string
+	FunctionSelector string `json:"function_selector"` // Function call, must not be left blank
+	CallValue        uint64 `json:"call_value"`        // Amount of TRX transferred with this transaction, measured in SUN (1 TRX = 1,000,000 SUN)
+	Parameter        string `json:"parameter"`         // Parameter encoding needs to be in accordance with the ABI rule
+	FeeLimit         uint64 `json:"fee_limit"`         // Maximum TRX consumption, measured in SUN (1 TRX = 1,000,000 SUN)
+	//	Visible          bool   `json:"visible"`           // Optional. Whehter the address is in base58check format.
+	CallTokenValue uint64 `json:"call_token_value"`
+	TokenID        uint64 `json:"token_id"`
 }
 
 type TriggerConstantContractReply struct {
@@ -121,3 +138,33 @@ type GetAssetIssueByIDReply struct {
 	URL          string `json:"url"`
 	ID           string `json:"id"`
 }
+
+type TriggerSmartContractTransferReply struct {
+	Result struct {
+		Result  bool   `json:"result"`
+		Code    string `json:"code"`
+		Message string `json:"message"`
+	} `json:"result"`
+	Transaction CreateTransactionReply `json:"transaction"`
+}
+
+type CreateTransactionReply struct {
+	Visible bool   `json:"visible"`
+	TxID    string `json:"txID"`
+	RawData struct {
+		Contract      []Contract `json:"contract"`
+		RefBlockBytes string     `json:"ref_block_bytes"`
+		RefBlockHash  string     `json:"ref_block_hash"`
+		Expiration    uint64     `json:"expiration"`
+		Timestamp     uint64     `json:"timestamp"`
+		FeeLimit      uint64     `json:"fee_limit"`
+	} `json:"raw_data"`
+	RawDataHex string `json:"raw_data_hex"`
+}
+
+type BroadcastSignedTransactionRequest struct {
+	RawData    string `json:"raw_data"`
+	RawDataHex string `json:"raw_data_hex"`
+}
+
+type BroadcastSignedTransactionReply struct{}
