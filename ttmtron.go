@@ -3,7 +3,6 @@ package ttmtron
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/trustwallet/go-libs/client"
@@ -229,16 +228,14 @@ func (t *TronRequest) TransferTRX(ctx context.Context, from, to string, amount u
 	return &result, nil
 }
 
-func (t *TronRequest) TransferTRC10Token(ctx context.Context, from, to string, tokenID uint64, amount uint64) (*CreateTransactionReply, error) { //nolint:lll
+func (t *TronRequest) TransferTRC10Token(ctx context.Context, from, to string, tokenID string, amount uint64) (*CreateTransactionReply, error) { //nolint:lll
 	var result CreateTransactionReply
-
-	tokenIDStr := fmt.Sprintf("%d", tokenID)
 
 	value := TransferValue{
 		Amount:       amount,
 		OwnerAddress: Base58ToHex(from),
 		ToAddress:    Base58ToHex(to),
-		AssetName:    hex.EncodeToString([]byte(tokenIDStr)),
+		AssetName:    hex.EncodeToString([]byte(tokenID)),
 	}
 
 	err := t.Post(&result, "wallet/transferasset", value)
@@ -252,7 +249,7 @@ func (t *TronRequest) TransferTRC10Token(ctx context.Context, from, to string, t
 
 func (t *TronRequest) TransferTRC20Token(ctx context.Context, from, to, smartContractAddress string, amount uint64, feeLimit uint64) (*CreateTransactionReply, error) { //nolint:lll
 	parameter := AddParameterAddress(to)
-	parameter += AddParameterAmount(amount * 1000000) // check this
+	parameter += AddParameterAmount(amount * 1 * 1000000) // check this
 
 	feeLimit *= 1000000
 
