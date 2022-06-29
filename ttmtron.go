@@ -261,15 +261,10 @@ func (t *TronRequest) TransferTRC20Token(ctx context.Context, from, to, smartCon
 	return result, nil
 }
 
-func (t *TronRequest) BroadcastSignedTransaction(rawdata, rawdataHex string) (*BroadcastSignedTransactionReply, error) {
+func (t *TronRequest) BroadcastSignedTransaction(req *BroadcastSignedTransactionRequest) (*BroadcastSignedTransactionReply, error) {
 	var result BroadcastSignedTransactionReply
 
-	err := t.Post(&result, "wallet/broadcasttransaction",
-		BroadcastSignedTransactionRequest{
-			RawData:    rawdata,
-			RawDataHex: rawdataHex,
-		},
-	)
+	err := t.Post(&result, "wallet/broadcasttransaction", req)
 
 	if err != nil {
 		return nil, err
