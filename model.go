@@ -148,23 +148,26 @@ type TriggerSmartContractTransferReply struct {
 	Transaction CreateTransactionReply `json:"transaction"`
 }
 
+type RawData struct {
+	Contract      []Contract `json:"contract"`
+	RefBlockBytes string     `json:"ref_block_bytes"`
+	RefBlockHash  string     `json:"ref_block_hash"`
+	Expiration    uint64     `json:"expiration"`
+	Timestamp     uint64     `json:"timestamp"`
+	FeeLimit      uint64     `json:"fee_limit"`
+}
+
 type CreateTransactionReply struct {
-	Visible bool   `json:"visible"`
-	TxID    string `json:"txID"`
-	RawData struct {
-		Contract      []Contract `json:"contract"`
-		RefBlockBytes string     `json:"ref_block_bytes"`
-		RefBlockHash  string     `json:"ref_block_hash"`
-		Expiration    uint64     `json:"expiration"`
-		Timestamp     uint64     `json:"timestamp"`
-		FeeLimit      uint64     `json:"fee_limit"`
-	} `json:"raw_data"`
-	RawDataHex string `json:"raw_data_hex"`
+	Visible    bool    `json:"visible"`
+	TxID       string  `json:"txID"`
+	RawData    RawData `json:"raw_data"`
+	RawDataHex string  `json:"raw_data_hex"`
 }
 
 type BroadcastSignedTransactionRequest struct {
-	RawData    string `json:"raw_data"`
-	RawDataHex string `json:"raw_data_hex"`
+	RawData    RawData `json:"raw_data"`
+	Signature  string  `json:"signature"`
+	RawDataHex string  `json:"raw_data_hex,omitempty"`
 }
 
 type BroadcastSignedTransactionReply struct{}
