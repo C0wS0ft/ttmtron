@@ -50,13 +50,13 @@ type Parameter struct {
 }
 
 type TransferValue struct {
-	Data            string `json:"data"`                 // TRC20
-	ContractAddress string `json:"contract_address"`     // TRC20
-	CallValue       uint64 `json:"call_value"`           // TRC20
-	Amount          uint64 `json:"amount"`               // TRC10 & TRX
-	OwnerAddress    string `json:"owner_address"`        // TRC10 & TRC20 & TRX
-	ToAddress       string `json:"to_address"`           // TRC10 & TRX
-	AssetName       string `json:"asset_name,omitempty"` // TRC10 & TRX
+	Data            string `json:"data,omitempty"`             // TRC20
+	ContractAddress string `json:"contract_address,omitempty"` // TRC20
+	CallValue       uint64 `json:"call_value,omitempty"`       // TRC20
+	Amount          uint64 `json:"amount,omitempty"`           // TRC10 & TRX
+	OwnerAddress    string `json:"owner_address"`              // TRC10 & TRC20 & TRX
+	ToAddress       string `json:"to_address,omitempty"`       // TRC10 & TRX
+	AssetName       string `json:"asset_name,omitempty"`       // TRC10 & TRX
 }
 
 type AccountRequest struct {
