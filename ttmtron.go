@@ -261,7 +261,7 @@ func (t *TronRequest) TransferTRC20Token(ctx context.Context, from, to, smartCon
 	return result, nil
 }
 
-func (t *TronRequest) BroadcastSignedTransaction(req *BroadcastSignedTransactionRequest) (*BroadcastSignedTransactionReply, error) {
+func (t *TronRequest) BroadcastSignedTransaction(req BroadcastSignedTransactionRequest) (*BroadcastSignedTransactionReply, error) {
 	var result BroadcastSignedTransactionReply
 
 	err := t.Post(&result, "wallet/broadcasttransaction", req)
