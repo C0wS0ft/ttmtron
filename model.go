@@ -165,9 +165,9 @@ type CreateTransactionReply struct {
 }
 
 type BroadcastSignedTransactionRequest struct {
-	RawData    RawData `json:"raw_data"`
-	Signature  string  `json:"signature"`
-	RawDataHex string  `json:"raw_data_hex,omitempty"`
+	RawData    RawData  `json:"raw_data"`
+	Signature  []string `json:"signature"`
+	RawDataHex string   `json:"raw_data_hex,omitempty"`
 }
 
 type BroadcastSignedTransactionReply struct{}
