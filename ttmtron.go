@@ -284,7 +284,7 @@ func (t *TronRequest) TransferTRC10Token(ctx context.Context, from, to string, t
 
 func (t *TronRequest) TransferTRC20Token(ctx context.Context, from, to, smartContractAddress string, amount uint64, feeLimit uint64) (*CreateTransactionReply, error) { //nolint:lll
 	parameter := AddParameterAddress(to)
-	parameter += AddParameterAmount(amount * 1 * 1000000) // check this
+	parameter += AddParameterAmount(amount)
 
 	result, err := t.triggerSmartContractTransfer(ctx, from, smartContractAddress, 0, parameter, feeLimit)
 	if err != nil {
