@@ -136,6 +136,7 @@ type GetAssetIssueByIDReply struct {
 	Abbr         string `json:"abbr"`
 	TotalSupply  int64  `json:"total_supply"`
 	TrxNum       int    `json:"trx_num"`
+	Precision    int    `json:"precision"` // This is TRC10 Decimals, 1 if empty
 	Num          int    `json:"num"`
 	StartTime    int64  `json:"start_time"`
 	EndTime      int64  `json:"end_time"`
