@@ -41,8 +41,8 @@ func (t *TronRequest) GetBlockByLimitNext(ctx context.Context, startnum, endnum 
 	return blocks, errors.Wrap(err, "unable to get block by limit")
 }
 
-// GetAccountBalance due to unknown reason Tron accepts only HEX address, not base58
-func (t *TronRequest) GetAccountBalance(ctx context.Context, address string, asset string) (uint64, error) {
+// GetTRXBalance due to unknown reason Tron accepts only HEX address, not base58
+func (t *TronRequest) GetTRXBalance(ctx context.Context, address string) (uint64, error) {
 	address = Base58ToHex(address)
 
 	var account AccountReply
@@ -56,7 +56,7 @@ func (t *TronRequest) GetAccountBalance(ctx context.Context, address string, ass
 	return account.Balance, nil
 }
 
-func (t *TronRequest) GetAccountBalanceV2(ctx context.Context, address string, asset string) (uint64, []AssetV2, error) {
+func (t *TronRequest) GetAccountBalance(ctx context.Context, address string) (uint64, []AssetV2, error) {
 	address = Base58ToHex(address)
 
 	var account AccountReply
@@ -68,6 +68,27 @@ func (t *TronRequest) GetAccountBalanceV2(ctx context.Context, address string, a
 	}
 
 	return account.Balance, account.AssetV2, nil
+}
+
+func (t *TronRequest) GetTRC10TokenBalance(ctx context.Context, address string, asset string) (uint64, error) {
+	address = Base58ToHex(address)
+
+	var account AccountReply
+
+	err := t.Post(&account, "wallet/getaccount", AccountRequest{Address: address, Visible: false})
+
+	if err != nil {
+		return 0, err
+	}
+
+	for _, a := range account.AssetV2 {
+		if a.Key == asset {
+			return a.Value, nil
+		}
+	}
+
+	// Asset not found
+	return 0, nil
 }
 
 // triggerConstantContract Call smart contract function and return constant_result field
