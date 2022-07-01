@@ -56,6 +56,20 @@ func (t *TronRequest) GetAccountBalance(ctx context.Context, address string, ass
 	return account.Balance, nil
 }
 
+func (t *TronRequest) GetAccountBalanceV2(ctx context.Context, address string, asset string) (uint64, []AssetV2, error) {
+	address = Base58ToHex(address)
+
+	var account AccountReply
+
+	err := t.Post(&account, "wallet/getaccount", AccountRequest{Address: address, Visible: false})
+
+	if err != nil {
+		return 0, []AssetV2{}, err
+	}
+
+	return account.Balance, account.AssetV2, nil
+}
+
 // triggerConstantContract Call smart contract function and return constant_result field
 func (t *TronRequest) triggerConstantContract(ctx context.Context, ownerAddress string, smartContractAddress string, function string, params []string) ([]string, error) { //nolint:lll
 	var result TriggerConstantContractReply

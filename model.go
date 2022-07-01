@@ -65,9 +65,14 @@ type AccountRequest struct {
 }
 
 type AccountReply struct {
-	AccountName string `json:"account_name"`
-	Address     string `json:"address"`
-	Balance     uint64 `json:"balance"`
+	Address string    `json:"address"`
+	Balance uint64    `json:"balance"`
+	AssetV2 []AssetV2 `json:"assetV2"`
+}
+
+type AssetV2 struct {
+	Key   string `json:"key"`
+	Value uint64 `json:"value"`
 }
 
 type TriggerConstantContractRequest struct {
