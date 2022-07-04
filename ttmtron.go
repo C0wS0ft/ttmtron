@@ -124,7 +124,7 @@ func (t *TronRequest) triggerSmartContractTransfer(ctx context.Context, ownerAdd
 	contract := TriggerSmartContractRequest{
 		OwnerAddress:     Base58ToHex(ownerAddress),
 		ContractAddress:  Base58ToHex(smartContractAddress),
-		FunctionSelector: "transfer (address, uint256)",
+		FunctionSelector: "transfer(address,uint256)",
 		CallValue:        callValue,
 		Parameter:        parameter,
 		FeeLimit:         feeLimit,
