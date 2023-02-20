@@ -28,12 +28,12 @@ type BlockData struct {
 
 type Tx struct {
 	Ret []struct {
-		ContractRet string `json:"contract_ret"`
+		ContractRet string `json:"contractRet"`
 	} `json:"ret"`
 	ID         string   `json:"txID"`
 	Signature  []string `json:"signature"`
 	RawData    TxData   `json:"raw_data"`
-	RawDataHex string   `json:"rawDataHex"`
+	RawDataHex string   `json:"raw_data_hex"`
 }
 
 type TxData struct {
