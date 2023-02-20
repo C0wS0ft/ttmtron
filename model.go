@@ -27,14 +27,22 @@ type BlockData struct {
 }
 
 type Tx struct {
-	ID        string `json:"txID"`
-	BlockTime int64  `json:"block_timestamp"`
-	Data      TxData `json:"raw_data"`
+	Ret []struct {
+		ContractRet string `json:"contract_ret"`
+	} `json:"ret"`
+	ID         string   `json:"txID"`
+	Signature  []string `json:"signature"`
+	RawData    TxData   `json:"raw_data"`
+	RawDataHex string   `json:"rawDataHex"`
 }
 
 type TxData struct {
-	Timestamp int64      `json:"timestamp"`
-	Contracts []Contract `json:"contract"`
+	Contracts     []Contract `json:"contract"`
+	RefBlockBytes string     `json:"ref_block_bytes"`
+	RefBlockHash  string     `json:"ref_block_hash"`
+	Expiration    uint64     `json:"expiration"`
+	FeeLimit      uint64     `json:"fee_limit"`
+	Timestamp     uint64     `json:"timestamp"`
 }
 
 type ContractType = string
