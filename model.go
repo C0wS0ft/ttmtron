@@ -41,7 +41,7 @@ type TxData struct {
 	RefBlockBytes string     `json:"ref_block_bytes"`
 	RefBlockHash  string     `json:"ref_block_hash"`
 	Expiration    uint64     `json:"expiration"`
-	FeeLimit      uint64     `json:"fee_limit"`
+	FeeLimit      int        `json:"fee_limit"` // in some blocks it happens to be below zero
 	Timestamp     uint64     `json:"timestamp"`
 }
 
